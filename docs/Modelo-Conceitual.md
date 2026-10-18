@@ -1,4 +1,4 @@
-beneficiario(
+```beneficiario(
 	id_beneficiario NUMBER(10) PK NOT NULL seq_id_beneficiario,
 	nome_beneficiario VARCHAR2(100) NOT NULL,
 	cpf	VARCHAR2(11) NOT NULL UNIQUE,
@@ -70,3 +70,4 @@ item_guia(
 	valor_informado NUMBER(10, 2) NOT NULL,
 	data_hora_atendimento DATE
 )
+```
