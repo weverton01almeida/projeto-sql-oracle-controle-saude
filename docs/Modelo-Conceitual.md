@@ -1,4 +1,5 @@
-```beneficiario(
+```
+beneficiario(
 	id_beneficiario NUMBER(10) PK NOT NULL seq_id_beneficiario,
 	nome_beneficiario VARCHAR2(100) NOT NULL,
 	cpf	VARCHAR2(11) NOT NULL UNIQUE,
