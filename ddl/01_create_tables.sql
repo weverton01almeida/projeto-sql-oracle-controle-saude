@@ -102,7 +102,7 @@ CREATE TABLE guia_atendimento
     id_prestador NUMBER(10) NOT NULL,
     id_plano NUMBER(10) NOT NULL,
     data_hora_entrada DATE NOT NULL,
-    data_hora_alta DATE NOT NULL,
+    data_hora_alta DATE,
     tipo_guia VARCHAR2(50) NOT NULL,
     status_guia VARCHAR2(20),
     
