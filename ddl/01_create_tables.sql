@@ -38,7 +38,7 @@ CREATE TABLE prestador
     CONSTRAINT pk_prestador_id_prestador PRIMARY KEY(id_prestador),
     CONSTRAINT uk_prestador_cpf_cnpj UNIQUE(cpf_cnpj),
     CONSTRAINT cuk_prestador_uf_classe_numero UNIQUE(uf_conselho, numero_conselho, conselho_classe)
-)
+);
 
 -- TABELA PLANO
 CREATE TABLE plano
@@ -53,7 +53,7 @@ CREATE TABLE plano
     
     CONSTRAINT pk_plano_id_plano PRIMARY KEY(id_plano),
     CONSTRAINT uk_plano_codigo_ans UNIQUE(codigo_ans)
-)
+);
 
 -- TABELA BENEFICIARIO
 CREATE TABLE beneficiario
@@ -75,7 +75,7 @@ CREATE TABLE beneficiario
        CONSTRAINT fk_id_plano FOREIGN KEY(id_plano) REFERENCES plano(id_plano),
        CONSTRAINT uk_beneficiario_cpf UNIQUE(cpf),
        CONSTRAINT ck_beneficiario_data_validade_carteirinha CHECK(data_validade_carteirinha > data_criacao)
-)
+);
 
 -- TABELA ITEM
 CREATE TABLE item
@@ -91,7 +91,7 @@ CREATE TABLE item
     CONSTRAINT pk_item_id_item PRIMARY KEY(id_item),
     CONSTRAINT uk_item_codigo_tuss UNIQUE(codigo_tuss),
     CONSTRAINT ck_item_valor_referencia CHECK(valor_referencia > 0)
-)
+);
 
 -- TABELA GUIA ATENDIMENTO
 CREATE TABLE guia_atendimento
@@ -113,7 +113,7 @@ CREATE TABLE guia_atendimento
     CONSTRAINT uk_g_atend_numero_guia UNIQUE(numero_guia),
     CONSTRAINT ck_g_atend_data_hora_alta CHECK(data_hora_alta >= data_hora_entrada)
 )
-
+;
 -- TABELA ITEM_GUIA
 CREATE TABLE item_guia
 (
@@ -128,4 +128,4 @@ CREATE TABLE item_guia
     CONSTRAINT fk_item_guia_id_guia FOREIGN KEY(id_guia) REFERENCES guia_atendimento(id_guia),
     CONSTRAINT fk_item_guia_id_item FOREIGN KEY(id_item) REFERENCES item(id_item),
     CONSTRAINT ck_item_guia_valor_informado CHECK(valor_informado >= 0)
-)
+);
