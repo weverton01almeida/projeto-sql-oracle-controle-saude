@@ -65,7 +65,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_prestador AS
 						(LENGTH(p_cpf_cnpj) = 14 AND UPPER(p_tipo_prestador) = 'J') -- Verifica caso for pessoa jurídica se número de caracteres inseridos é 14
 					)
 				THEN 
-					RAISE_APPLICATION_ERROR('-20002', 'CPF ou CNPJ com número de caracteres diferentes do permitido (11 para CPF ou 14 para CNPJ)');
+					RAISE_APPLICATION_ERROR(-20002, 'CPF ou CNPJ com número de caracteres diferentes do permitido (11 para CPF ou 14 para CNPJ)');
 			
 			WHEN NOT(
 						-- Regras para garantir que os campos de número recebam apenas números e os campos texto, recebam apenas texto
@@ -79,7 +79,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_prestador AS
 						REGEXP_LIKE(UPPER(p_status_prestador),'^[A-Z ]+$')
 						
 					) THEN
-						RAISE_APPLICATION_ERROR('-20003', 'Há campos que possuem caracteres incompatíveis.');
+						RAISE_APPLICATION_ERROR(-20003, 'Há campos que possuem caracteres incompatíveis.');
 			-- Confere as variaveis da tabela para garantir que as variaveis de número e as de texto, recebam os dados apropriados
 		END CASE;
 		
@@ -115,7 +115,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_prestador AS
 			
 			WHEN NOT(
 						-- Regras para garantir que os campos de número recebam apenas números e os campos texto, recebam apenas texto
-						REGEXP_LIKE(p_cpf_cnpj,'^[0-9]+$') AND
+						REGEXP_LIKE(p_id_prestador, '^[0-9]+$') AND --Garantir a segurança da query.
+                        REGEXP_LIKE(p_cpf_cnpj,'^[0-9]+$') AND
 						REGEXP_LIKE(p_numero_conselho,'^[0-9]+$') AND
 						REGEXP_LIKE(p_telefone, '^[0-9]+$') AND
 						REGEXP_LIKE(UPPER(p_tipo_prestador),'^[A-Z ]+$') AND
@@ -125,7 +126,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_prestador AS
 						REGEXP_LIKE(UPPER(p_status_prestador),'^[A-Z ]+$')
 						
 					) THEN
-						RAISE_APPLICATION_ERROR('-20003', 'Há campos que possuem caracteres incompatíveis.');
+						RAISE_APPLICATION_ERROR(-20003, 'Há campos que possuem caracteres incompatíveis.');
 			-- Confere as variaveis da tabela para garantir que as variaveis de número e as de texto, recebam os dados apropriados
 		END CASE;
 		
@@ -154,6 +155,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_prestador AS
 	)IS
 	
 	BEGIN
+        IF NOT REGEXP_LIKE(p_id_prestador, '^[0-9]+$') THEN --Garantir a segurança da query.
+            RAISE_APPLICATION_ERROR(-20003, 'Há campos que possuem caracteres incompatíveis.');
+        END IF;
 		DELETE FROM prestador WHERE id_prestador = p_id_prestador;
 	END prc_deletar;
 
