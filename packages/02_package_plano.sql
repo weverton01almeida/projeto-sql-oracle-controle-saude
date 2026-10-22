@@ -30,6 +30,7 @@ CREATE OR REPLACE PACKAGE pkg_plano AS
     );
     
 END pkg_plano;
+/
 
 
 -- Criando o body do package que irá realizar os comandos DML dentro da tabela de plano
@@ -54,7 +55,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_plano AS
             RAISE_APPLICATION_ERROR(-20001, 'O nome_plano informado ja está cadastrado para outro plano');
         END IF;
         INSERT INTO PLANO(nome_plano, codigo_ans, tipo_contratacao, segmentacao_assistencial, status_plano)
-            VALUES(p_nome_plano, p_codigo_ans, p_tipo_contracao, p_segmentacao_assistencial, p_status_plano);      
+            VALUES(p_nome_plano, p_codigo_ans, p_tipo_contratacao, p_segmentacao_assistencial, p_status_plano);      
     END prc_inserir;
     
 -- altera um registro na tabela de plano
@@ -82,7 +83,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_plano AS
             codigo_ans = p_codigo_ans,
             tipo_contratacao = p_tipo_contratacao,
             segmentacao_assistencial = p_segmentacao_assistencial,
-            status_plano = p_status_plano
+            status_plano = p_status_plano,
+            data_ultima_alteracao = sysdate
         WHERE id_plano = p_id_plano;
         
     END prc_alterar;
@@ -98,3 +100,4 @@ CREATE OR REPLACE PACKAGE BODY pkg_plano AS
     END prc_deletar;
 
 END pkg_plano;
+/

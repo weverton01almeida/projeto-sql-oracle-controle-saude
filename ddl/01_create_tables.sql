@@ -34,6 +34,7 @@ CREATE TABLE prestador
     email VARCHAR2(100),
     status_prestador VARCHAR2(20) NOT NULL,
     data_criacao DATE DEFAULT sysdate NOT NULL,
+    data_ultima_alteracao DATE DEFAULT sysdate NOT NULL,
     
     CONSTRAINT pk_prestador_id_prestador PRIMARY KEY(id_prestador),
     CONSTRAINT uk_prestador_cpf_cnpj UNIQUE(cpf_cnpj),
@@ -50,6 +51,7 @@ CREATE TABLE plano
     segmentacao_assistencial VARCHAR2(100) NOT NULL,
     status_plano VARCHAR2(20) NOT NULL,
     data_criacao DATE DEFAULT sysdate NOT NULL,
+    data_ultima_alteracao DATE DEFAULT sysdate NOT NULL,
     
     CONSTRAINT pk_plano_id_plano PRIMARY KEY(id_plano),
     CONSTRAINT uk_plano_codigo_ans UNIQUE(codigo_ans)
@@ -70,6 +72,7 @@ CREATE TABLE beneficiario
        data_validade_carteirinha DATE NOT NULL,
        status_beneficiario VARCHAR2(20) NOT NULL,
        data_criacao DATE DEFAULT sysdate NOT NULL,
+       data_ultima_alteracao DATE DEFAULT sysdate NOT NULL,
        
        CONSTRAINT pk_beneficiario_id_beneficiario PRIMARY KEY(id_beneficiario),
        CONSTRAINT fk_id_plano FOREIGN KEY(id_plano) REFERENCES plano(id_plano),
@@ -87,6 +90,7 @@ CREATE TABLE item
     valor_referencia NUMBER(10, 2) NOT NULL,
     status_item VARCHAR2(20) NOT NULL,
     data_criacao DATE DEFAULT sysdate NOT NULL,
+    data_ultima_alteracao DATE DEFAULT sysdate NOT NULL,
     
     CONSTRAINT pk_item_id_item PRIMARY KEY(id_item),
     CONSTRAINT uk_item_codigo_tuss UNIQUE(codigo_tuss),
