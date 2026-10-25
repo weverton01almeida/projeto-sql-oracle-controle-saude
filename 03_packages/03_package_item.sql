@@ -39,17 +39,28 @@ CREATE OR REPLACE PACKAGE BODY pkg_item AS
         p_valor_referencia IN item.valor_referencia%type,
         p_status_item IN item.status_item%type
     )IS
-    -- Declaração de variáveis da procedure
+    -- Declaração de variáveis para tratar os parametros recebidos
+        v_codigo_tuss item.codigo_tuss%type;
+        v_descricao item.descricao%type;
+        v_tipo_item item.tipo_item%type;
+        v_valor_referencia item.valor_referencia%type;
+        v_status_item item.status_item %type;
     
     BEGIN
+    -- Tratamento dos parametros recebidos, para as variaveis da procedure
+        v_codigo_tuss := p_codigo_tuss;
+        v_descricao := fn_nrm_texto(p_descricao);
+        v_tipo_item := fn_nrm_texto(p_tipo_item);
+        v_valor_referencia := p_valor_referencia;
+        v_status_item := fn_nrm_texto(p_status_item);
         CASE
         -- Verifica se os valores inseridos nos campos estão conforme esperado pela tabela.
             WHEN NOT(
-                REGEXP_LIKE(p_codigo_tuss, '^[0-9]+$') AND
-                REGEXP_LIKE(UPPER(p_descricao), '^[A-Z ]+$') AND 
-                REGEXP_LIKE(UPPER(p_tipo_item), '^[A-Z ]+$') AND
-                REGEXP_LIKE(p_valor_referencia, '^[0-9]+(\.[0-9]+)?$') AND -- Número inteiro ou número decimal é aceito
-                REGEXP_LIKE(UPPER(p_status_item), '^[A-Z ]+$')
+                REGEXP_LIKE(v_codigo_tuss, '^[0-9]+$') AND
+                REGEXP_LIKE(v_descricao, '^[A-Z ]+$') AND 
+                REGEXP_LIKE(v_tipo_item, '^[A-Z ]+$') AND
+                REGEXP_LIKE(v_valor_referencia, '^[0-9]+(\.[0-9]+)?$') AND -- Número inteiro ou número decimal é aceito
+                REGEXP_LIKE(v_status_item, '^[A-Z ]+$')
                 )
                 THEN
                     RAISE_APPLICATION_ERROR(-20003, 'Há campos que possuem caracteres incompatíveis.');
@@ -57,7 +68,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_item AS
             
             -- Conferencia realizada, dados válidos, inserir valores no banco
             INSERT INTO item(codigo_tuss, descricao, tipo_item, valor_referencia, status_item)
-                VALUES(p_codigo_tuss, p_descricao, p_tipo_item, p_valor_referencia, p_status_item);
+                VALUES(v_codigo_tuss, v_descricao, v_tipo_item, v_valor_referencia, v_status_item);
     END prc_inserir;
     
     -- Altera dados na tabela Item
@@ -71,18 +82,30 @@ CREATE OR REPLACE PACKAGE BODY pkg_item AS
         p_status_item IN item.status_item%type
     )
     IS
-    --Declaração de variaveis da procedure
-    
+    -- Declaração de variáveis para tratar os parametros recebidos
+        v_id_item item.id_item%type;
+        v_codigo_tuss item.codigo_tuss%type;
+        v_descricao item.descricao%type;
+        v_tipo_item item.tipo_item%type;
+        v_valor_referencia item.valor_referencia%type;
+        v_status_item item.status_item %type;
     BEGIN
+        -- Tratamento dos parametros recebidos, para as variaveis da procedure
+        v_id_item := p_id_item;
+        v_codigo_tuss := p_codigo_tuss;
+        v_descricao := fn_nrm_texto(p_descricao);
+        v_tipo_item := fn_nrm_texto(p_tipo_item);
+        v_valor_referencia := p_valor_referencia;
+        v_status_item := fn_nrm_texto(p_status_item);
         -- Verifica se os valores para alteração nos campos estão conforme esperado pela tabela.
         CASE 
             WHEN NOT(
-                REGEXP_LIKE(p_id_item, '^[0-9]+$') AND -- Garantir que o id seja um número e inteiro. *Segurança*
-                REGEXP_LIKE(p_codigo_tuss, '^[0-9]+$') AND
-                REGEXP_LIKE(UPPER(p_descricao), '^[A-Z ]+$') AND 
-                REGEXP_LIKE(UPPER(p_tipo_item), '^[A-Z ]+$') AND
-                REGEXP_LIKE(p_valor_referencia, '^[0-9]+(\.[0-9]+)?$') AND -- Número inteiro ou número decimal é aceito
-                REGEXP_LIKE(UPPER(p_status_item), '^[A-Z ]+$')
+                REGEXP_LIKE(v_id_item, '^[0-9]+$') AND -- Garantir que o id seja um número e inteiro. *Segurança*
+                REGEXP_LIKE(v_codigo_tuss, '^[0-9]+$') AND
+                REGEXP_LIKE(v_descricao, '^[A-Z ]+$') AND 
+                REGEXP_LIKE(v_tipo_item, '^[A-Z ]+$') AND
+                REGEXP_LIKE(v_valor_referencia, '^[0-9]+(\.[0-9]+)?$') AND -- Número inteiro ou número decimal é aceito
+                REGEXP_LIKE(v_status_item, '^[A-Z ]+$')
             )
                 THEN
                     RAISE_APPLICATION_ERROR(-20003, 'Há campos que possuem caracteres incompatíveis.');
@@ -91,13 +114,13 @@ CREATE OR REPLACE PACKAGE BODY pkg_item AS
         -- Alterar o registro solicitado
         UPDATE item
         SET
-            codigo_tuss = p_codigo_tuss,
-            descricao = p_descricao,
-            tipo_item = p_tipo_item,
-            valor_referencia = p_valor_referencia,
-            status_item = p_status_item,
+            codigo_tuss = v_codigo_tuss,
+            descricao = v_descricao,
+            tipo_item = v_tipo_item,
+            valor_referencia = v_valor_referencia,
+            status_item = v_status_item,
             data_ultima_alteracao = sysdate
-        WHERE id_item = p_id_item;
+        WHERE id_item = v_id_item;
     END prc_alterar;
     
         PROCEDURE prc_deletar

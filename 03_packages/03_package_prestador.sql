@@ -55,7 +55,22 @@ CREATE OR REPLACE PACKAGE BODY pkg_prestador AS
 		p_status_prestador IN prestador.status_prestador%type
 	
 	)IS
--- Declaração de variaveis da procedure
+        -- Criação de variaveis da procedure para trata-las logo com a function de normalizar os textos
+        v_nome_prestador  prestador.nome_prestador%type;
+        v_tipo_prestador prestador.tipo_prestador%type;
+        v_conselho_classe prestador.conselho_classe%type;
+        v_uf_conselho prestador.uf_conselho%type;
+        v_especialidade prestador.especialidade%type;
+        v_status_prestador prestador.status_prestador%type;
+        
+        -- Normalizando as variaveis recebidas nos parametros
+        v_nome_prestador := fn_nrm_texto(p_nome_prestador);
+        v_tipo_prestador := fn_nrm_texto(p_tipo_prestador);
+        v_conselho_classe := fn_nrm_texto(p_conselho_classe);
+        v_uf_conselho := fn_nrm_texto(p_uf_conselho);
+        v_especialidade := fn_nrm_texto(p_especialidade);
+        v_status_prestador := fn_nrm_texto(p_status_prestador);
+        
 		
 	BEGIN
 		-- Verifica se a variavel que armazena cpf e cnpj contem apenas números e a quantidade de digitos esta como o esperado: [Pessoa Fisica(CPF): 11 DIGITOS] [Pessoa Jurídica(CNPJ): 14 DIGITOS]
@@ -72,11 +87,11 @@ CREATE OR REPLACE PACKAGE BODY pkg_prestador AS
 						REGEXP_LIKE(p_cpf_cnpj,'^[0-9]+$') AND
 						REGEXP_LIKE(p_numero_conselho,'^[0-9]+$') AND
 						REGEXP_LIKE(p_telefone, '^[0-9]+$') AND
-						REGEXP_LIKE(UPPER(p_tipo_prestador),'^[A-Z ]+$') AND -- de A a Z com espaços
-						REGEXP_LIKE(UPPER(p_conselho_classe), '^[A-Z]+$') AND
-						REGEXP_LIKE(UPPER(p_uf_conselho), '^[A-Z]+$') AND
-						REGEXP_LIKE(UPPER(p_especialidade), '^[A-Z ]+$') AND
-						REGEXP_LIKE(UPPER(p_status_prestador),'^[A-Z ]+$')
+						REGEXP_LIKE(v_tipo_prestador,'^[A-Z ]+$') AND -- de A a Z com espaços
+						REGEXP_LIKE(v_conselho_classe, '^[A-Z]+$') AND
+						REGEXP_LIKE(v_uf_conselho, '^[A-Z]+$') AND
+						REGEXP_LIKE(v_especialidade, '^[A-Z ]+$') AND
+						REGEXP_LIKE(v_status_prestador,'^[A-Z ]+$')
 						
 					) THEN
 						RAISE_APPLICATION_ERROR(-20003, 'Há campos que possuem caracteres incompatíveis.');
@@ -85,7 +100,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_prestador AS
 		
 		-- Apos conferencias realizadas, inserir os valores no banco
 		INSERT INTO prestador(nome_prestador, tipo_prestador, cpf_cnpj, conselho_classe, numero_conselho, uf_conselho, especialidade, telefone, email, status_prestador)
-			VALUES(p_nome_prestador, p_tipo_prestador, p_cpf_cnpj, p_conselho_classe, p_numero_conselho, p_uf_conselho, p_especialidade, p_telefone, p_email, p_status_prestador);
+			VALUES(v_nome_prestador, v_tipo_prestador, p_cpf_cnpj, v_conselho_classe, p_numero_conselho, v_uf_conselho, v_especialidade, p_telefone, p_email, v_status_prestador);
 	END prc_inserir;
 	
 	
@@ -103,7 +118,21 @@ CREATE OR REPLACE PACKAGE BODY pkg_prestador AS
 		p_email IN prestador.email%type,
 		p_status_prestador IN prestador.status_prestador%type		
 	)IS
-	
+        -- Criação de variaveis da procedure para trata-las logo com a function de normalizar os textos
+        v_nome_prestador prestador.nome_prestador%type;
+        v_tipo_prestador prestador.tipo_prestador%type;
+        v_conselho_classe prestador.conselho_classe%type;
+        v_uf_conselho prestador.uf_conselho%type;
+        v_especialidade prestador.especialidade%type;
+        v_status_prestador prestador.status_prestador%type;
+        
+        -- Normalizando as variaveis recebidas nos parametros
+        v_nome_prestador := fn_nrm_texto(p_nome_prestador);
+        v_tipo_prestador := fn_nrm_texto(p_tipo_prestador);
+        v_conselho_classe := fn_nrm_texto(p_conselho_classe);
+        v_uf_conselho := fn_nrm_texto(p_uf_conselho);
+        v_especialidade := fn_nrm_texto(p_especialidade);
+        v_status_prestador := fn_nrm_texto(p_status_prestador);
 	BEGIN
 		CASE
 			WHEN NOT(
@@ -119,11 +148,11 @@ CREATE OR REPLACE PACKAGE BODY pkg_prestador AS
                         REGEXP_LIKE(p_cpf_cnpj,'^[0-9]+$') AND
 						REGEXP_LIKE(p_numero_conselho,'^[0-9]+$') AND
 						REGEXP_LIKE(p_telefone, '^[0-9]+$') AND
-						REGEXP_LIKE(UPPER(p_tipo_prestador),'^[A-Z ]+$') AND
-						REGEXP_LIKE(UPPER(p_conselho_classe), '^[A-Z]+$') AND
-						REGEXP_LIKE(UPPER(p_uf_conselho), '^[A-Z]+$') AND
-						REGEXP_LIKE(UPPER(p_especialidade), '^[A-Z ]+$') AND
-						REGEXP_LIKE(UPPER(p_status_prestador),'^[A-Z ]+$')
+						REGEXP_LIKE(v_tipo_prestador,'^[A-Z ]+$') AND
+						REGEXP_LIKE(v_conselho_classe, '^[A-Z]+$') AND
+						REGEXP_LIKE(v_uf_conselho, '^[A-Z]+$') AND
+						REGEXP_LIKE(v_especialidade, '^[A-Z ]+$') AND
+						REGEXP_LIKE(v_status_prestador,'^[A-Z ]+$')
 						
 					) THEN
 						RAISE_APPLICATION_ERROR(-20003, 'Há campos que possuem caracteres incompatíveis.');
@@ -133,16 +162,16 @@ CREATE OR REPLACE PACKAGE BODY pkg_prestador AS
 		-- Atualizar o registro conforme solicitado.
 		UPDATE prestador 
 		SET
-			nome_prestador = p_nome_prestador, 
-			tipo_prestador = p_tipo_prestador, 
+			nome_prestador = v_nome_prestador, 
+			tipo_prestador = v_tipo_prestador, 
 			cpf_cnpj = p_cpf_cnpj, 
-			conselho_classe = p_conselho_classe, 
+			conselho_classe = v_conselho_classe, 
 			numero_conselho = p_numero_conselho, 
-			uf_conselho = p_uf_conselho, 
-			especialidade = p_especialidade, 
+			uf_conselho = v_uf_conselho, 
+			especialidade = v_especialidade, 
 			telefone = p_telefone, 
 			email = p_email, 
-			status_prestador = p_status_prestador,
+			status_prestador = v_status_prestador,
 			data_ultima_alteracao = sysdate
 		WHERE id_prestador = p_id_prestador;
 		
