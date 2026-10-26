@@ -10,7 +10,6 @@ CREATE OR REPLACE PACKAGE pkg_beneficiario AS
         p_sexo IN beneficiario.sexo%type,
         p_email IN beneficiario.email%type,
         p_telefone IN beneficiario.telefone%type,
-        p_numero_carteirinha IN beneficiario.numero_carteirinha%type,
         p_data_validade_carteirinha IN beneficiario.data_validade_carteirinha%type,
         p_status_beneficiario IN beneficiario.status_beneficiario%type
     );
@@ -26,7 +25,6 @@ CREATE OR REPLACE PACKAGE pkg_beneficiario AS
         p_sexo IN beneficiario.sexo%type,
         p_email IN beneficiario.email%type,
         p_telefone IN beneficiario.telefone%type,
-        p_numero_carteirinha IN beneficiario.numero_carteirinha%type,
         p_data_validade_carteirinha IN beneficiario.data_validade_carteirinha%type,
         p_status_beneficiario IN beneficiario.status_beneficiario%type    
     );
@@ -40,7 +38,7 @@ CREATE OR REPLACE PACKAGE pkg_beneficiario AS
 END pkg_beneficiario;
 /
 
--- Criando Especificação do package da tabela Beneficiario, que realizara e tratará os comandos DML
+-- Criando o body do package da tabela Beneficiario, que realizara e tratará os comandos DML
 CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
     -- Insere dados na tabela Beneficiario
     PROCEDURE prc_inserir
@@ -52,7 +50,6 @@ CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
         p_sexo IN beneficiario.sexo%type,
         p_email IN beneficiario.email%type,
         p_telefone IN beneficiario.telefone%type,
-        p_numero_carteirinha IN beneficiario.numero_carteirinha%type,
         p_data_validade_carteirinha IN beneficiario.data_validade_carteirinha%type,
         p_status_beneficiario IN beneficiario.status_beneficiario%type
     )
@@ -68,6 +65,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
         v_numero_carteirinha beneficiario.numero_carteirinha%type;
         v_data_validade_carteirinha beneficiario.data_validade_carteirinha%type;
         v_status_beneficiario beneficiario.status_beneficiario%type;
+        v_codigo_ans plano.codigo_ans%type;
         
     BEGIN
     -- PL/SQL
@@ -80,7 +78,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
     v_sexo := fn_nrm_texto(p_sexo);
     v_email := p_email;
     v_telefone := p_telefone;
-    v_numero_carteirinha := p_numero_carteirinha;
+    SELECT codigo_ans INTO v_codigo_ans FROM plano WHERE id_plano = v_id_plano; -- Faz a busca do codigo da ans para o plano selecionado para o beneficiario
+    v_numero_carteirinha := '0062' || v_codigo_ans || SEQ_CARTEIRINHA_BENEFICIARIO.NEXTVAL;  -- Adiciona o codigo da ans ao codigo da operadora de plano de saude '0062' e traz o proximo numero de carteirinha disponivel
     v_data_validade_carteirinha := p_data_validade_carteirinha;
     v_status_beneficiario := fn_nrm_texto(p_status_beneficiario);
     
@@ -94,7 +93,6 @@ CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
             (v_data_nascimento <= sysdate) AND -- Conferir se data de nascimento é menor ou igual a data atual
             REGEXP_LIKE(v_sexo, '^[A-Z]+$') AND
             REGEXP_LIKE(v_telefone, '^[0-9]+$') AND
-            REGEXP_LIKE(v_numero_carteirinha, '^[0-9]+$') AND
             (v_data_validade_carteirinha >= sysdate) AND -- Conferir se data de validade de carteirinha é maior ou igual a data atual
             REGEXP_LIKE(v_status_beneficiario, '^[A-Z]+$')
         ) THEN
@@ -141,7 +139,6 @@ CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
         p_sexo IN beneficiario.sexo%type,
         p_email IN beneficiario.email%type,
         p_telefone IN beneficiario.telefone%type,
-        p_numero_carteirinha IN beneficiario.numero_carteirinha%type,
         p_data_validade_carteirinha IN beneficiario.data_validade_carteirinha%type,
         p_status_beneficiario IN beneficiario.status_beneficiario%type    
     )
@@ -155,7 +152,6 @@ CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
         v_sexo beneficiario.sexo%type;
         v_email beneficiario.email%type;
         v_telefone beneficiario.telefone%type;
-        v_numero_carteirinha beneficiario.numero_carteirinha%type;
         v_data_validade_carteirinha beneficiario.data_validade_carteirinha%type;
         v_status_beneficiario beneficiario.status_beneficiario%type;
 
@@ -171,7 +167,6 @@ CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
         v_sexo := fn_nrm_texto(p_sexo);
         v_email := p_email;
         v_telefone := p_telefone;
-        v_numero_carteirinha := p_numero_carteirinha;
         v_data_validade_carteirinha := p_data_validade_carteirinha;
         v_status_beneficiario := fn_nrm_texto(p_status_beneficiario);
         
@@ -186,7 +181,6 @@ CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
                 (v_data_nascimento <= sysdate) AND -- Conferir se data de nascimento é menor ou igual a data atual
                 REGEXP_LIKE(v_sexo, '^[A-Z]+$') AND
                 REGEXP_LIKE(v_telefone, '^[0-9]+$') AND
-                REGEXP_LIKE(v_numero_carteirinha, '^[0-9]+$') AND
                 (v_data_validade_carteirinha >= sysdate) AND -- Conferir se data de validade de carteirinha é maior ou igual a data atual
                 REGEXP_LIKE(v_status_beneficiario, '^[A-Z]+$')
             ) THEN
@@ -202,7 +196,6 @@ CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
             sexo = v_sexo,
             email = v_email,
             telefone = v_telefone,
-            numero_carteirinha = v_numero_carteirinha,
             data_validade_carteirinha = v_data_validade_carteirinha,
             status_beneficiario = v_status_beneficiario,
             data_ultima_alteracao = sysdate
@@ -218,7 +211,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
         v_id_beneficiario beneficiario.id_beneficiario%type;
     -- Declaração de variaveis internas da procedure
     BEGIN
-        v_id_beneficiario := fn_nrm_texto(p_id_beneficiario);
+        v_id_beneficiario := p_id_beneficiario;
         CASE
             WHEN NOT (REGEXP_LIKE(v_id_beneficiario, '^[0-9]+$'))
             THEN
