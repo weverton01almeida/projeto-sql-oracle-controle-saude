@@ -115,7 +115,7 @@ CREATE TABLE guia_atendimento
     CONSTRAINT fk_g_atend_id_prestador FOREIGN KEY(id_prestador) REFERENCES prestador(id_prestador),
     CONSTRAINT fk_g_atend_id_plano FOREIGN KEY(id_plano) REFERENCES plano(id_plano),
     CONSTRAINT uk_g_atend_numero_guia UNIQUE(numero_guia),
-    CONSTRAINT ck_g_atend_data_hora_alta CHECK(data_hora_alta >= data_hora_entrada)
+    CONSTRAINT ck_g_atend_data_hora_alta CHECK((data_hora_alta >= data_hora_entrada) OR data_hora_alta IS NULL)
 )
 ;
 -- TABELA ITEM_GUIA
