@@ -84,48 +84,23 @@ CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
     v_status_beneficiario := fn_nrm_texto(p_status_beneficiario);
     
     -- Verifica se os valores para alteração nos campos estão conforme esperado pela tabela.
-    CASE
-        WHEN NOT
-        (
-            REGEXP_LIKE(v_id_plano, '^[0-9]+$') AND
-            REGEXP_LIKE(v_nome_beneficiario, '^[A-Z ]+$') AND
-            REGEXP_LIKE(v_cpf, '^[0-9]+$') AND
-            (v_data_nascimento <= sysdate) AND -- Conferir se data de nascimento é menor ou igual a data atual
-            REGEXP_LIKE(v_sexo, '^[A-Z]+$') AND
-            REGEXP_LIKE(v_telefone, '^[0-9]+$') AND
-            (v_data_validade_carteirinha >= sysdate) AND -- Conferir se data de validade de carteirinha é maior ou igual a data atual
-            REGEXP_LIKE(v_status_beneficiario, '^[A-Z]+$')
+    IF NOT(
+        REGEXP_LIKE(v_id_plano, '^[0-9]+$') AND
+        REGEXP_LIKE(v_nome_beneficiario, '^[A-Z ]+$') AND
+        REGEXP_LIKE(v_cpf, '^[0-9]+$') AND
+        (v_data_nascimento <= sysdate) AND -- Conferir se data de nascimento é menor ou igual a data atual
+        REGEXP_LIKE(v_sexo, '^[A-Z]+$') AND
+        REGEXP_LIKE(v_telefone, '^[0-9]+$') AND
+        (v_data_validade_carteirinha >= sysdate) AND -- Conferir se data de validade de carteirinha é maior ou igual a data atual
+        REGEXP_LIKE(v_status_beneficiario, '^[A-Z]+$')
         ) THEN
             RAISE_APPLICATION_ERROR(-20003, 'Há campos que possuem caracteres incompatíveis.');
-        END CASE;
+    END IF;
         
         -- Apos conferencias, inserir registro na tabela
     INSERT INTO beneficiario 
-    (
-        id_plano,
-        nome_beneficiario,
-        cpf,
-        data_nascimento,
-        sexo,
-        email,
-        telefone,
-        numero_carteirinha,
-        data_validade_carteirinha,
-        status_beneficiario
-    )
-    VALUES
-    (
-        v_id_plano,
-        v_nome_beneficiario,
-        v_cpf,
-        v_data_nascimento,
-        v_sexo,
-        v_email,
-        v_telefone,
-        v_numero_carteirinha,
-        v_data_validade_carteirinha,
-        v_status_beneficiario
-    );
+    (id_plano, nome_beneficiario, cpf, data_nascimento, sexo, email, telefone, numero_carteirinha, data_validade_carteirinha, status_beneficiario)
+    VALUES(v_id_plano, v_nome_beneficiario, v_cpf, v_data_nascimento, v_sexo, v_email, v_telefone, v_numero_carteirinha, v_data_validade_carteirinha, v_status_beneficiario);
     END prc_inserir;
     
     -- Altera dados na tabela Beneficiario
@@ -171,21 +146,19 @@ CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
         v_status_beneficiario := fn_nrm_texto(p_status_beneficiario);
         
         -- Verifica se os valores para alteração nos campos estão conforme esperado pela tabela.
-        CASE
-            WHEN NOT
-            (
-                REGEXP_LIKE(v_id_beneficiario, '^[0-9]+$') AND
-                REGEXP_LIKE(v_id_plano, '^[0-9]+$') AND
-                REGEXP_LIKE(v_nome_beneficiario, '^[A-Z ]+$') AND
-                REGEXP_LIKE(v_cpf, '^[0-9]+$') AND
-                (v_data_nascimento <= sysdate) AND -- Conferir se data de nascimento é menor ou igual a data atual
-                REGEXP_LIKE(v_sexo, '^[A-Z]+$') AND
-                REGEXP_LIKE(v_telefone, '^[0-9]+$') AND
-                (v_data_validade_carteirinha >= sysdate) AND -- Conferir se data de validade de carteirinha é maior ou igual a data atual
-                REGEXP_LIKE(v_status_beneficiario, '^[A-Z]+$')
+        IF NOT(
+            REGEXP_LIKE(v_id_beneficiario, '^[0-9]+$') AND
+            REGEXP_LIKE(v_id_plano, '^[0-9]+$') AND
+            REGEXP_LIKE(v_nome_beneficiario, '^[A-Z ]+$') AND
+            REGEXP_LIKE(v_cpf, '^[0-9]+$') AND
+            (v_data_nascimento <= sysdate) AND -- Conferir se data de nascimento é menor ou igual a data atual
+            REGEXP_LIKE(v_sexo, '^[A-Z]+$') AND
+            REGEXP_LIKE(v_telefone, '^[0-9]+$') AND
+            (v_data_validade_carteirinha >= sysdate) AND -- Conferir se data de validade de carteirinha é maior ou igual a data atual
+            REGEXP_LIKE(v_status_beneficiario, '^[A-Z]+$')
             ) THEN
                 RAISE_APPLICATION_ERROR(-20003, 'Há campos que possuem caracteres incompatíveis.');
-            END CASE;
+        END IF;
         -- Apos conferencias, inserir registro na tabela
         UPDATE beneficiario
         SET
@@ -212,11 +185,11 @@ CREATE OR REPLACE PACKAGE BODY pkg_beneficiario AS
     -- Declaração de variaveis internas da procedure
     BEGIN
         v_id_beneficiario := p_id_beneficiario;
-        CASE
-            WHEN NOT (REGEXP_LIKE(v_id_beneficiario, '^[0-9]+$'))
-            THEN
+        IF NOT(
+            REGEXP_LIKE(v_id_beneficiario, '^[0-9]+$')
+            ) THEN
                 RAISE_APPLICATION_ERROR(-20003, 'Há campos que possuem caracteres incompatíveis.');
-        END CASE;
+        END IF;
         -- Apos conferencia, deletar registro na tabela
         DELETE FROM beneficiario WHERE id_beneficiario = v_id_beneficiario;
     -- PL/SQL
