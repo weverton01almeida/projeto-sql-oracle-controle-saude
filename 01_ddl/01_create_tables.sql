@@ -107,6 +107,7 @@ CREATE TABLE guia_atendimento
     id_plano NUMBER(10) NOT NULL,
     data_hora_entrada DATE NOT NULL,
     data_hora_alta DATE,
+    data_ultima_alteracao DATE DEFAULT sysdate NOT NULL,
     tipo_guia VARCHAR2(50) NOT NULL,
     status_guia VARCHAR2(20),
     
@@ -126,7 +127,9 @@ CREATE TABLE item_guia
     id_item NUMBER(10) NOT NULL,
     quantidade NUMBER(10) NOT NULL,
     valor_informado NUMBER(10, 2) NOT NULL,
-    data_hora_atendimento DATE,
+    data_hora_atendimento DATE NOT NULL,
+    data_ultima_alteracao DATE DEFAULT sysdate NOT NULL,
+
     
     CONSTRAINT cpk_item_guia_id_guia_sequencia PRIMARY KEY(id_guia, sequencia_item),
     CONSTRAINT fk_item_guia_id_guia FOREIGN KEY(id_guia) REFERENCES guia_atendimento(id_guia),
