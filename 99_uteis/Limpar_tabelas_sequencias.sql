@@ -1,0 +1,16 @@
+DROP TABLE item_guia CASCADE CONSTRAINTS;
+DROP TABLE guia_atendimento CASCADE CONSTRAINTS;
+DROP TABLE beneficiario CASCADE CONSTRAINTS;
+DROP TABLE plano CASCADE CONSTRAINTS;
+DROP TABLE prestador CASCADE CONSTRAINTS;
+DROP TABLE item CASCADE CONSTRAINTS;
+
+DROP SEQUENCE seq_carteirinha_beneficiario;
+DROP SEQUENCE seq_numero_guia;
+
+DROP FUNCTION fn_nrm_texto;
+
+DROP PACKAGE pkg_beneficiario;
+DROP PACKAGE pkg_item;
+DROP PACKAGE pkg_plano;
+DROP PACKAGE pkg_prestador;
