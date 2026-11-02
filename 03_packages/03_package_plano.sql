@@ -73,7 +73,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_plano AS
             IF NOT (
                 --Regras para garantir que cada campo da tabela plano receba os dados tratados
                 REGEXP_LIKE(v_codigo_ans,'^[0-9]+$') AND
-                REGEXP_LIKE(v_nome_plano,'^[A-Z ]+$') AND
+                REGEXP_LIKE(v_nome_plano,'^[A-Z0-9 ]+$') AND
                 REGEXP_LIKE(v_tipo_contratacao,'^[A-Z ]+$') AND
                 REGEXP_LIKE(v_segmentacao_assistencial, '^[A-Z ]+$') AND
                 REGEXP_LIKE(v_status_plano, '^[A-Z ]+$')
@@ -148,6 +148,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_plano AS
         p_id_plano IN NUMBER --necessário o id_plano para realizar a exclusão
     ) IS
     BEGIN
+        IF NOT REGEXP_LIKE(p_id_plano, '^[0-9]+$') THEN -- Garantir a segurança do banco, apenas deletar se o campo p_id_plano possuir apenas numeros no campo.
+            RAISE_APPLICATION_ERROR(-20003, 'Há campos que possuem caracteres incompatíveis.');
+        END IF;    
         -- deletar o registro da tabela plano, conforme o id_plano
         DELETE FROM plano WHERE id_plano = p_id_plano;
     END prc_deletar;
